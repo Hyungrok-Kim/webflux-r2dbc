@@ -18,6 +18,7 @@ public class CustomerRouteConfig {
         return RouterFunctions.route()
                 .GET("/router/customers", customerHandler::loadCustomersStream)
                 .GET("/router/customers/{id}", customerHandler::findCustomer)
+                .POST("/router/customers",customerHandler::saveCustomer)
                 .build();
     }
 }

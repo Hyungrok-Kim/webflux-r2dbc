@@ -23,10 +23,16 @@ public class CustomerHandler {
     }
 
     public Mono<ServerResponse> findCustomer(ServerRequest serverRequest){
-        int customerId = Integer.valueof(serverRequest.pathVariable("id"));
-        dao.getCustomersStreamNoDelay()
+        int customerId = Integer.valueOf(serverRequest.pathVariable("id"));
+        Mono<Customer> customerMono = dao.getCustomersStreamNoDelay()
                 .filter(customer -> customer.getId() == customerId)
                 .next();
         return ServerResponse.ok().body(customerMono, Customer.class);
+    }
+
+    public Mono<ServerResponse> saveCustomer(ServerRequest serverRequest) {
+        Mono<Customer> customerMono = serverRequest.bodyToMono(Customer.class);
+        Mono<String> stringMono = customerMono.map(customer -> customer.getId() + " : " + customer.getName());
+        return ServerResponse.ok().body(stringMono, String.class);
     }
 }
