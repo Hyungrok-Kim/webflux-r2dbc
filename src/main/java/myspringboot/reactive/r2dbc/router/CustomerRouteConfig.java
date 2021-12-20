@@ -72,7 +72,7 @@ public class CustomerRouteConfig {
                                             @ApiResponse(responseCode = "404", description = "customer not found with given id")
                                     },
                                     parameters = {
-                                            @Parameter(in = ParameterIn.PATH,name = "id")
+                                            @Parameter(in = ParameterIn.PATH, name = "id")
                                     }
 
                             )
