@@ -40,6 +40,12 @@ public class MonoTest {
 
     @Test
     public void fromSupplier() {
-        Supplier<String> StrSupplier = () -> "Supplier Message";
+        //Supplier<String> StrSupplier = () -> "Supplier Message";
+        Mono<String> stringMono = Mono.fromSupplier(() -> "Supplier Message").log();
+        stringMono.subscribe(System.out::println);
+
+        StepVerifier.create(stringMono)
+                .expectNext("Supplier Message")
+                .verifyComplete();
     }
 }
