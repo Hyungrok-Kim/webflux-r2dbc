@@ -1,6 +1,8 @@
 package myspringboot.reactive.r2dbc;
 
 import org.junit.jupiter.api.Test;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
@@ -30,5 +32,44 @@ public class FluxTest {
 
         flux.subscribe(System.out::println, (e) -> System.out.println(e.getMessage()));
 
+        StepVerifier.create(flux)
+                    .expectNext("Boot")
+                    .expectNext("MSA")
+                    .expectNext("Cloud")
+                    .expectError(RuntimeException.class)
+                    .verify();
+    }
+
+    @Test
+    public void subscriberFlux() {
+        Flux<String> stringFlux = Flux.just("Hello", "WebFlux", "Boot"); //.log();
+        stringFlux.subscribe(new Subscriber<String>() {
+            @Override
+            public void onSubscribe(Subscription s) {
+                s.request(Integer.MAX_VALUE);
+                // s.request(2);
+            }
+
+            @Override
+            public void onNext(String s) {
+                System.out.println("FluxTest.onNext " + s);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                System.out.println("FluxTest.onError " + t.getMessage());
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("FluxTest.onComplete");
+            }
+        });
+
+        StepVerifier.create(stringFlux)
+                    .expectNext("Hello")
+                    .expectNext("WebFlux")
+                    .expectNext("Boot")
+                    .expectComplete();
     }
 }
