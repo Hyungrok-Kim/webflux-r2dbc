@@ -35,4 +35,10 @@ public class CustomerDao {
                     .doOnNext(i -> System.out.println("Flux processing count : " + i))
                     .map(i -> new Customer(i, "Customer" + i));
     }
+
+    public Flux<Customer> getCustomersStreamNoDelay() {
+        return Flux.range(1, 10)
+                .doOnNext(i -> System.out.println("Flux processing count : " + i))
+                .map(i -> new Customer(i, "Customer" + i));
+    }
 }
