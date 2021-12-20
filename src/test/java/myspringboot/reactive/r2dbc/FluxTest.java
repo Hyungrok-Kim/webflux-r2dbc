@@ -72,4 +72,17 @@ public class FluxTest {
                     .expectNext("Boot")
                     .expectComplete();
     }
+
+    @Test
+    public void rangeFlux() {
+        Flux<Integer> integerFlux = Flux.range(10, 10)
+                .filter(num -> Math.floorMod(num, 2) == 1)
+                .log();
+
+        integerFlux.subscribe(System.out::println);
+
+        StepVerifier.create(integerFlux)
+                    .expectNext(11, 13, 15, 17, 19)
+                    .verifyComplete();
+    }
 }
