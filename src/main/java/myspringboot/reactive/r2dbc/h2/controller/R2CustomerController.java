@@ -42,7 +42,8 @@ public class R2CustomerController {
     public Flux<ServerSentEvent<Customer>> findAllCustomerSSE() {
         return sinks.asFlux()
                     .mergeWith(customerRepository.findAll())
-                    .map(customer -> ServerSentEvent.builder(customer).build());
+                    .map(customer -> ServerSentEvent.builder(customer).build())
+                    .doOnCancel(() -> sinks.asFlux().blockLast());
     }
 
     @GetMapping("/{id}")
