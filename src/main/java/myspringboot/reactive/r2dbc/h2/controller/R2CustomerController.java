@@ -2,8 +2,12 @@ package myspringboot.reactive.r2dbc.h2.controller;
 
 import myspringboot.reactive.r2dbc.h2.entity.Customer;
 import myspringboot.reactive.r2dbc.h2.repository.R2CustomerRepository;
+
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
+
 import org.springframework.web.bind.annotation.*;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Sinks;
@@ -31,6 +35,14 @@ public class R2CustomerController {
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<Customer> findAllCustomer() {
         return customerRepository.findAll().delayElements(Duration.ofSeconds(1)).log();
+    }
+
+    //ServerSentEvent 객체를 직접 사용하면 MediaType.TEXT_EVENT_STREAM_VALUE 설정을 생략할 수 있다.
+    @GetMapping(value = "/sse")
+    public Flux<ServerSentEvent<Customer>> findAllCustomerSSE() {
+        return sinks.asFlux()
+                    .mergeWith(customerRepository.findAll())
+                    .map(customer -> ServerSentEvent.builder(customer).build());
     }
 
     @GetMapping("/{id}")
