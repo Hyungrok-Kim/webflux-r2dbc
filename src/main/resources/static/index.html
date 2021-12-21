@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+</head>
+<body>
+<h1>Spring WebFlux + Server Sent Events</h1>
+<ul id="list">
+
+</ul>
+
+<script type="text/javascript">
+      var source = null;
+      function start() {
+            source = new EventSource("http://localhost:8087/r2customers/sse");
+            console.log("create EventSource");
+            source.onmessage = function(ev) {
+                console.log("on message: ", ev.data);
+                $("#list").append("<li>" + ev.data + "</li>");
+            };
+            source.onerror = function(err) {
+                console.log("on err: ", err);
+                stop();
+            };
+        }
+        function stop() {
+            if (source != null) {
+                source.close();
+                console.log("close EventSource");
+                source = null;
+            }
+        }
+
+        $(document).ready(function(){
+            start();
+        });
+        $(window).on("unload", function () {
+            stop();
+        });
+    </script>
+
+</body>
+</html>
